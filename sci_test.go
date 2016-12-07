@@ -230,6 +230,32 @@ func TestStreaming(t *t.T) {
 	cleanFiles("/tmp/lsl.txt.fifo")
 }
 
+func TestGlobOutputs(t *t.T) {
+	piperun := NewPipelineRunner()
+
+	create := NewFromShell("create", "ls -l / > {o:out}")
+	create.SetPathStatic("out", "ls.txt")
+	piperun.AddProcess(create)
+
+	split := NewFromShell("split", "split -l1 {i:in} ls.txt.split_ # {o:splits}")
+	split.GlobOutputs("splits", "ls.txt.split_*")
+	piperun.AddProcess(split)
+
+	copyf := NewFromShell("copy", "cp {i:in} {o:out}")
+	copyf.SetPathExtend("in", "out", ".copy")
+	piperun.AddProcess(copyf)
+
+	snk := NewSink()
+	piperun.AddProcess(snk)
+
+	create.Out["out"].Connect(split.In["in"])
+	split.Out["splits"].Connect(copyf.In["in"])
+
+	snk.Connect(copyf.Out["out"])
+
+	piperun.Run()
+}
+
 // Helper processes
 
 type CombinatoricsProcess struct {

@@ -24,6 +24,7 @@ type SciProcess struct {
 	In               map[string]*FilePort
 	Out              map[string]*FilePort
 	OutPortsDoStream map[string]bool
+	OutPortsDoGlob   map[string]bool
 	PathFormatters   map[string]func(*SciTask) string
 	ParamPorts       map[string]*ParamPort
 	CustomExecute    func(*SciTask)
@@ -36,6 +37,7 @@ func NewSciProcess(name string, command string) *SciProcess {
 		In:               make(map[string]*FilePort),
 		Out:              make(map[string]*FilePort),
 		OutPortsDoStream: make(map[string]bool),
+		OutPortsDoGlob:   make(map[string]bool),
 		PathFormatters:   make(map[string]func(*SciTask) string),
 		ParamPorts:       make(map[string]*ParamPort),
 		Spawn:            true,
