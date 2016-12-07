@@ -20,7 +20,8 @@ func ExecCmd(cmd string) string {
 
 func Check(err error) {
 	if err != nil {
-		panic(err)
+		Error.Println(err.Error())
+		os.Exit(1)
 	}
 }
 
